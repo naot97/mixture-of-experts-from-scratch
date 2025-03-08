@@ -91,9 +91,11 @@ def main(args):
         train(model, config, train_data, val_data)
         print("[INFO] Training complete.")
     elif args.action == "eval":
-        evaluate(model, config, val_data)
+        eval_loss = evaluate(model, config, val_data)
+        print("[INFO] val loss: {eval_loss:.4f}")
+        print("[INFO] Evaluation complete.")
     else:
-        raise ValueError(f"Invalid action: {args.action}")
+        raise ValueError(f"[ERROR] Invalid action: {args.action}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
