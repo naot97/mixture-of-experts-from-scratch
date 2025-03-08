@@ -2,7 +2,7 @@ vocab_file: 'config/vocab.txt'
 vocab_size: 104
 batch_size: 2
 block_size: 8
-max_iters : 30000
+max_iters : 3000
 eval_interval : 100
 learning_rate : 0.001
 eval_iters : 200
