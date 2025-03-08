@@ -1,0 +1,14 @@
+vocab_file: 'vocab.txt'
+vocab_size: 104
+batch_size: 2
+block_size: 8
+max_iters : 30000
+eval_interval : 100
+learning_rate : 0.001
+eval_iters : 200
+n_embed : 384
+n_head : 2
+n_layer : 1
+expert_dropout : 0.0
+attention_dropout : 0.0
+n_experts : 2

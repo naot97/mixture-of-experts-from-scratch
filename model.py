@@ -65,14 +65,14 @@ class MoeLayer(nn.Module):
 
 
 class Head(nn.Module):
-    def __init__(self, config):
-        super.__init__()
+    def __init__(self, config, head_size):
+        super().__init__()
         n_embed = config.n_embed
-        head_size = config.head_size
         block_size = config.block_size
         self.key = nn.Linear(n_embed, head_size, bias=False)
         self.query = nn.Linear(n_embed, head_size, bias=False)
         self.value = nn.Linear(n_embed, head_size, bias=False)
+        self.dropout = nn.Dropout(config.attention_dropout)
         self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
 
     def forward(self, x):
@@ -90,8 +90,10 @@ class Head(nn.Module):
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, config):
-        super.__init__()
-        self.heads = [Head(config.head_size) for _ in config.n_head]
+        super().__init__()
+        n_head = config.n_head
+        head_size = config.n_embed//n_head
+        self.heads = [Head(config, head_size) for _ in range(n_head)]
         self.dropout = nn.Dropout(config.attention_dropout)
     def forward(self, x):
         out = torch.cat([head(x) for head in self.heads], dim=-1)
@@ -100,14 +102,14 @@ class MultiHeadAttention(nn.Module):
         return out
 
 class BlockLayer(nn.Module):
-    def __init__(self, config):
-        super.__init__()
+    def __init__(self, config, idx):
+        super().__init__()
         n_head = config.n_head
         n_embed = config.n_embed
         n_experts = config.n_experts
-        self.sa_head = MultiHeadAttention(n_head, n_embed//n_head)
+        self.sa_head = MultiHeadAttention(config)
         self.smoe = MoeLayer(
-            experts=[Expert(n_embed) for _ in range(n_experts)],
+            experts=[Expert(config) for _ in range(n_experts)],
             gate=nn.Linear(n_embed, n_experts, bias=False),
         )
 
@@ -122,24 +124,28 @@ class BlockLayer(nn.Module):
 
 class LLM(nn.Module):
     def __init__(self, config):
-        self.device = "cpu"
+        super().__init__()
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         vocab_size = config.vocab_size
         n_embed = config.n_embed
         n_layer = config.n_layer
-        self.embedding = nn.embedding()
+        block_size = config.block_size
+        self.embedding = nn.Embedding(vocab_size, n_embed)
+        self.position_embedding_table = nn.Embedding(block_size, n_embed)    
         self.encoders = [BlockLayer(config, layer_i) for layer_i in range(n_layer)]
         self.lm_head =  nn.Linear(n_embed, vocab_size)
 
     def forward(self, idx, labels = None, **kwargs):
+        B, T = idx.shape
         token_embedding_vec = self.embedding(idx)
-        pos_embedding_vec = self.position_embedding_table(torch.arange(len).to(self.device))
+        pos_embedding_vec = self.position_embedding_table(torch.arange(T)   .to(self.device))
         x = token_embedding_vec + pos_embedding_vec
         for encoder in self.encoders:
             x = encoder(x)
 
         logits = self.lm_head(x)
         
-        if labels:
+        if labels is not None:
             B, T, C = logits.shape
             logits = logits.view(B*T, C)
             targets = labels.view(B*T)
