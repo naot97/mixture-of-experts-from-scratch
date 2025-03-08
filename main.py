@@ -1,11 +1,14 @@
 import argparse
-import yaml
-import torch
+import glob
 import json
 import os
-import glob
-from model import LLM
 import unicodedata
+
+from tqdm import tqdm
+import torch
+import yaml
+
+from model import LLM
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -37,7 +40,7 @@ class Config:
 def evaluate(model, config, val_data):
     model.eval()
     losses = torch.zeros(config.eval_iters)
-    for k in range(config.eval_iters):
+    for k in tqdm(range(config.eval_iters), desc="Evaluating"):
         X, Y = get_batch(val_data, config.batch_size, config.block_size)
         X, Y = X.to(device), Y.to(device)
         loss = model(X, Y)
@@ -48,7 +51,7 @@ def train(model, config, train_data, val_data):
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
     model.train()
     train_losses = []
-    for iter in range(config.max_iters):
+    for iter in tqdm(range(config.max_iters), desc="Training"):
         xb, yb = get_batch(train_data, config.batch_size, config.block_size)
         xb, yb = xb.to(device), yb.to(device)
 
@@ -58,7 +61,7 @@ def train(model, config, train_data, val_data):
         loss.backward()
         optimizer.step()
 
-        if iter % 100 == 0 or iter == config.max_iters - 1:
+        if iter % 1000 == 0 or iter == config.max_iters - 1:
             eval_loss = evaluate(model, config, val_data)
             train_loss = sum(train_losses) / len(train_losses)
             print(f"step {iter}: train loss {train_loss:.4f}, val loss {eval_loss:.4f}")
@@ -76,7 +79,7 @@ def main(args):
     data = "\n".join([x['story'] for x in data])
     data = unicodedata.normalize("NFKC", data)
 
-    chars, encode, decode = get_tokenizer(config.vocab_file)
+    _, encode, decode = get_tokenizer(config.vocab_file)
     tokenized_data = torch.tensor(encode(data), dtype=torch.long)
 
     n = int(0.8 * len(tokenized_data))
