@@ -8,7 +8,7 @@ from tqdm import tqdm
 import torch
 import yaml
 
-from model import LLM
+from src.model import LLM
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -40,7 +40,7 @@ class Config:
 def evaluate(model, config, val_data):
     model.eval()
     losses = torch.zeros(config.eval_iters)
-    for k in tqdm(range(config.eval_iters), desc="Evaluating"):
+    for k in tqdm(range(config.eval_iters), desc="[INFO] Evaluating"):
         X, Y = get_batch(val_data, config.batch_size, config.block_size)
         X, Y = X.to(device), Y.to(device)
         loss = model(X, Y)
@@ -51,7 +51,8 @@ def train(model, config, train_data, val_data):
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
     model.train()
     train_losses = []
-    for iter in tqdm(range(config.max_iters), desc="Training"):
+    print("[INFO] Starting training with {config.max_iters} steps...")
+    for iter in tqdm(range(config.max_iters), desc="[INFO] Training"):
         xb, yb = get_batch(train_data, config.batch_size, config.block_size)
         xb, yb = xb.to(device), yb.to(device)
 
@@ -61,10 +62,10 @@ def train(model, config, train_data, val_data):
         loss.backward()
         optimizer.step()
 
-        if iter % 1000 == 0 or iter == config.max_iters - 1:
+        if iter % 100 == 0 or iter == config.max_iters - 1:
             eval_loss = evaluate(model, config, val_data)
             train_loss = sum(train_losses) / len(train_losses)
-            print(f"step {iter}: train loss {train_loss:.4f}, val loss {eval_loss:.4f}")
+            print(f"[INFO] step {iter}: train loss {train_loss:.4f}, val loss {eval_loss:.4f}")
             model.train()
 
 def main(args):
@@ -88,6 +89,7 @@ def main(args):
 
     if args.action == "train":
         train(model, config, train_data, val_data)
+        print("[INFO] Training complete.")
     elif args.action == "eval":
         evaluate(model, config, val_data)
     else:
@@ -95,7 +97,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="config.yaml")
+    parser.add_argument("--config", type=str, default="config/config.yaml")
     parser.add_argument("--action", type=str, default="train")
     args = parser.parse_args()
 
