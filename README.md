@@ -56,7 +56,7 @@ Results will be logged in the console, accompanied by visualizations of model pe
 [INFO] Training complete.
 ```
 
-## 🧪 Experiments
+## 🧪 Inference
 - Varying the number of experts to analyze performance trade-offs.
 - Exploring different gating mechanisms for improved routing efficiency.
 
