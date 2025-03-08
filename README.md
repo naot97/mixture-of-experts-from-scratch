@@ -38,13 +38,15 @@ mkdir -p data && cd data \
   && tar -xzf TinyStories_all_data.tar.gz && rm TinyStories_all_data.tar.gz
 ```
 
-### Training the Model
+### Train the Model
 ```bash
 python main.py --action train
 ```
 
-### Custom Configuration
-Modify the `config/config.yaml` file to adjust model parameters, data paths, and hyperparameters.
+### Inference
+```bash
+```
+
 
 ## 📈 Results
 Results will be logged in the console, accompanied by visualizations of model performance over time. Example console output:
@@ -56,9 +58,8 @@ Results will be logged in the console, accompanied by visualizations of model pe
 [INFO] Training complete.
 ```
 
-## 🧪 Inference
-- Varying the number of experts to analyze performance trade-offs.
-- Exploring different gating mechanisms for improved routing efficiency.
+## 🧪 Custom Configuration
+Modify the `config/config.yaml` file to adjust model parameters, data paths, and hyperparameters.
 
 ## 🧩 Future Enhancements
 - Integration with PyTorch Lightning for improved training scalability.
