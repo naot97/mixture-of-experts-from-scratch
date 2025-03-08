@@ -47,7 +47,14 @@ python main.py --action train
 Modify the `config/config.yaml` file to adjust model parameters, data paths, and hyperparameters.
 
 ## 📈 Results
-Results will be logged in the `logs/` directory with visualizations of model performance over time.
+Results will be logged in the console, accompanied by visualizations of model performance over time. Example console output:
+```bash
+[INFO] Starting training with 50 epochs...
+[INFO] Epoch 1/50 - Loss: 0.5243 - Accuracy: 82.3%
+[INFO] Epoch 25/50 - Loss: 0.3125 - Accuracy: 90.1%
+[INFO] Epoch 50/50 - Loss: 0.2051 - Accuracy: 94.7%
+[INFO] Training complete.
+```
 
 ## 🧪 Experiments
 - Varying the number of experts to analyze performance trade-offs.
