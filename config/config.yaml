@@ -1,4 +1,4 @@
-vocab_file: 'vocab.txt'
+vocab_file: 'config/vocab.txt'
 vocab_size: 104
 batch_size: 2
 block_size: 8
