@@ -30,18 +30,21 @@ moe-from-scratch/
    ```
 
 ## 📋 Usage
-### Training the Model
+### Downloading data
+To download the TinyStories dataset:
 ```bash
-python train.py --epochs 50 --batch_size 64 --lr 0.001
+mkdir -p data && cd data \
+  && wget -q --show-progress https://huggingface.co/datasets/roneneldan/TinyStories/resolve/main/TinyStories_all_data.tar.gz \
+  && tar -xzf TinyStories_all_data.tar.gz && rm TinyStories_all_data.tar.gz
 ```
 
-### Running Inference
+### Training the Model
 ```bash
-python inference.py --input_file sample_data.json
+python main.py --action train
 ```
 
 ### Custom Configuration
-Modify the `config.json` file to adjust model parameters, data paths, and hyperparameters.
+Modify the `config/config.yaml` file to adjust model parameters, data paths, and hyperparameters.
 
 ## 📈 Results
 Results will be logged in the `logs/` directory with visualizations of model performance over time.
