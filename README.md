@@ -45,6 +45,7 @@ python main.py --action train
 
 ### Inference
 ```bash
+python inference.py --input "[your_input]"
 ```
 
 
@@ -68,6 +69,17 @@ Results will be logged in the console, accompanied by visualizations of model pe
 [INFO] Training complete.
 ```
 
+And when you want to do inference, example output:
+```
+bash
+python inference.py --input "a long time ago" --max_new_token 500
+[INFO] Generated output: a long time ago, there was a she what orn it was drawaying.
+Lily said on the tress and went fast, what let so deep. So, he said, "From you, Max! I have full new get special?" But so atcher amaze her paint and helped swing that mudre that he every day.
+One Bunny day, a ball abloove make turn very thought animals alun. Lily asked the field mortor the ground, another of get there were so aftul, scareful deond again.
+One day, a mexe, something more sak yurng afr he could the make slove locks?
+Lily asked her for to man stook
+```
+
 ## 🧪 Custom Configuration
 Modify the `config/config.yaml` file to adjust model parameters, data paths, and hyperparameters.
 
@@ -75,6 +87,12 @@ Modify the `config/config.yaml` file to adjust model parameters, data paths, and
 - Integration with PyTorch Lightning for improved training scalability.
 - Addition of Transformer-based MoE models.
 - Enhanced visualization tools for interpretability.
+
+📚 References
+
+- Mixture of Experts: A Comprehensive Overview
+- TinyStories Dataset
+- https://github.com/antonio-f/mixture-of-experts-from-scratch
 
 ## 🤝 Contributing
 Contributions are welcome! Please open an issue or submit a pull request to discuss your ideas.

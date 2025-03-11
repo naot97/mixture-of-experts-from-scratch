@@ -100,6 +100,7 @@ class LLM(nn.Module):
         n_embed = config.n_embed
         n_layer = config.n_layer
         block_size = config.block_size
+        self.block_size = block_size
         self.embedding = nn.Embedding(vocab_size, n_embed)
         self.position_embedding_table = nn.Embedding(block_size, n_embed)
         self.encoders = nn.ModuleList([BlockLayer(config, layer_i) for layer_i in range(n_layer)])
@@ -124,3 +125,16 @@ class LLM(nn.Module):
             return loss
         else:
             return logits
+        
+    def generate(self, x, max_new_tokens = 128):
+        for _ in range(max_new_tokens):
+            x_cond = x[:, -self.block_size:]
+
+            logits = self.forward(x_cond)
+            logits = logits[:, -1, :]
+            probs = F.softmax(logits, dim = -1)
+            idx_next = torch.multinomial(probs, num_samples = 1)
+            x = torch.cat((x, idx_next), dim = 1)
+
+        return x
+
