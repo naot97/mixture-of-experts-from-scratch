@@ -112,4 +112,5 @@ dmypy.json
 .pyre/
 
 data/*
+model_out/*
 # End of .gitignore
