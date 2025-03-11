@@ -85,8 +85,6 @@ def main(args):
     if args.action == "train":
         train(model, config, train_data, val_data)
         print("[INFO] Training complete.")
-        # torch.save(model.state_dict(), os.path.join(config.model_dir, config.model_name))
-        # print("[INFO] Model saved.")
     elif args.action == "eval":
         eval_loss = evaluate(model, config, val_data)
         print("[INFO] val loss: {eval_loss:.4f}")
