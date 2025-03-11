@@ -90,8 +90,9 @@ Modify the `config/config.yaml` file to adjust model parameters, data paths, and
 
 📚 References
 
-- Mixture of Experts: A Comprehensive Overview
-- TinyStories Dataset
+- [Mixtral of Experts Paper](https://arxiv.org/abs/2401.04088)
+- [Mixture of Experts Explained](https://huggingface.co/blog/moe)
+- [TinyStories Dataset](https://huggingface.co/datasets/roneneldan/TinyStories)
 - https://github.com/antonio-f/mixture-of-experts-from-scratch
 
 ## 🤝 Contributing
