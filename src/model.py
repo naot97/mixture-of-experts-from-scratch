@@ -34,7 +34,7 @@ class MoeLayer(nn.Module):
         
         for i, expert in enumerate(self.experts):
             batch_idx, nth_expert = torch.where(selected_experts == i)
-            results[batch_idx] += weights[batch_idx, nth_expert] * expert(inputs_squashed[batch_idx])
+            results[batch_idx] += weights[batch_idx, nth_expert, None] * expert(inputs_squashed[batch_idx])
         
         return results.view_as(inputs)
 
@@ -88,9 +88,9 @@ class BlockLayer(nn.Module):
         self.ln2 = nn.LayerNorm(n_embed)
 
     def forward(self, x):
-        moe_output = x + self.ln1(self.sa_head(x))
-        moe_output = moe_output + self.ln2(self.smoe(moe_output))
-        return moe_output
+        out = x + self.ln1(self.sa_head(x))
+        out = out + self.ln2(self.smoe(x))
+        return out
 
 class LLM(nn.Module):
     def __init__(self, config):
@@ -103,13 +103,12 @@ class LLM(nn.Module):
         self.embedding = nn.Embedding(vocab_size, n_embed)
         self.position_embedding_table = nn.Embedding(block_size, n_embed)
         self.encoders = nn.ModuleList([BlockLayer(config, layer_i) for layer_i in range(n_layer)])
-        self.register_buffer('position_ids', torch.arange(block_size).to(self.device))
         self.lm_head = nn.Linear(n_embed, vocab_size)
 
-    def forward(self, idx, labels=None):
+    def forward(self, idx, labels=None, **kwargs):
         B, T = idx.shape
         token_embedding_vec = self.embedding(idx)
-        pos_embedding_vec = self.position_embedding_table(self.position_ids[:T])
+        pos_embedding_vec = self.position_embedding_table(torch.arange(T).to(self.device))
         x = token_embedding_vec + pos_embedding_vec
         
         for encoder in self.encoders:

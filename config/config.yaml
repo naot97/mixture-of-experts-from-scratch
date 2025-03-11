@@ -12,3 +12,5 @@ n_layer : 1
 expert_dropout : 0.0
 attention_dropout : 0.0
 n_experts : 2
+model_dir : 'model_out'
+model_name : 'my_llm.pth'

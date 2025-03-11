@@ -39,6 +39,7 @@ def train(model, config, train_data, val_data):
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
     model.train()
     train_losses = []
+    best_loss = float("inf")
     print("[INFO] Starting training with {config.max_iters} steps...")
     for iter in tqdm(range(config.max_iters), desc="[INFO] Training"):
         xb, yb = get_batch(train_data, config.batch_size, config.block_size)
@@ -54,6 +55,12 @@ def train(model, config, train_data, val_data):
             eval_loss = evaluate(model, config, val_data)
             train_loss = sum(train_losses) / len(train_losses)
             print(f"[INFO] step {iter}: train loss {train_loss:.4f}, val loss {eval_loss:.4f}")
+            if eval_loss < best_loss:
+                
+                best_loss = eval_loss
+                print("[INFO] Saving model...")
+                torch.save(model.state_dict(), os.path.join(config.model_dir, config.model_name))
+                print("[INFO] Model saved.")
             model.train()
 
 def main(args):
@@ -78,6 +85,8 @@ def main(args):
     if args.action == "train":
         train(model, config, train_data, val_data)
         print("[INFO] Training complete.")
+        # torch.save(model.state_dict(), os.path.join(config.model_dir, config.model_name))
+        # print("[INFO] Model saved.")
     elif args.action == "eval":
         eval_loss = evaluate(model, config, val_data)
         print("[INFO] val loss: {eval_loss:.4f}")
