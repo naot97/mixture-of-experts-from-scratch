@@ -40,7 +40,7 @@ def train(model, config, train_data, val_data):
     model.train()
     train_losses = []
     best_loss = float("inf")
-    print("[INFO] Starting training with {config.max_iters} steps...")
+    print(f"[INFO] Starting training with {config.max_iters} steps...")
     for iter in tqdm(range(config.max_iters), desc="[INFO] Training"):
         xb, yb = get_batch(train_data, config.batch_size, config.block_size)
         xb, yb = xb.to(device), yb.to(device)
