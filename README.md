@@ -75,7 +75,8 @@ bash
 python inference.py --input "hello, i'm" --max_new_token 500
 [INFO] Generate output: hello, i'm a little girl named Later angry. She loved to eat it in the ground. One day, they were strong and walk together and house food a magic more away.
 "Mom, Dank you walking for me!" Lucy, The found show, they carrothe bird the park. And a pille of and worry too. Lily next that day had and favoal that Fallandy of her creaches and and they boghth Timmy said "You that her mom have fun!"
-Marg and Lily was very happy to many agail. Tim was shaped, happy that happy and saw that they were playing with him```
+Marg and Lily was very happy to many agail. Tim was shaped, happy that happy and saw that they were playing with him
+```
 
 ## 🧪 Custom Configuration
 Modify the `config/config.yaml` file to adjust model parameters, data paths, and hyperparameters.
